@@ -22,7 +22,7 @@ if not exist "artifacts\model.pt" (
 
 echo Starting web UI at http://127.0.0.1:8000
 start "" "http://127.0.0.1:8000"
-".venv\Scripts\uvicorn.exe" api:app --host 127.0.0.1 --port 8000
+".venv\Scripts\python.exe" -m uvicorn api:app --host 127.0.0.1 --port 8000
 if errorlevel 1 (
   echo Server exited with an error.
   pause
