@@ -129,7 +129,7 @@ Specialties: `Kardiologie`, `Neurologie`, `Orthopaedie`, `Innere_Medizin`, `Notf
 ## Setup (Windows) — only needed to retrain or use the local API
 
 ```powershell
-cd c:\Users\mfits\Documents\ai_example
+cd c:\Users\mfits\Documents\medical_ai_demo
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
