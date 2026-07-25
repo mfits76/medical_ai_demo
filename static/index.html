@@ -10,18 +10,19 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="page">
       <header class="header">
-        <p class="eyebrow">medical AI Engineer PoC</p>
+        <p class="eyebrow">Medical AI Engineer PoC</p>
         <h1>Clinical Note Triage</h1>
         <p class="lede">
-          Route synthetic German clinical notes to a specialty with a PyTorch
-          TextCNN. Demo only — not a medical device.
+          Route synthetic German clinical notes to a specialty. Uses a
+          pretrained TextCNN exported from offline PyTorch training — runs
+          entirely in the browser.
         </p>
-        <p id="status" class="status">Checking model…</p>
+        <p id="status" class="status">Loading pretrained model…</p>
       </header>
 
       <main class="workspace">
@@ -64,6 +65,6 @@
         </section>
       </main>
     </div>
-    <script src="/static/app.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>

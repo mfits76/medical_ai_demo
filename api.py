@@ -1,4 +1,4 @@
-"""FastAPI service + web UI for clinical note specialty triage."""
+"""FastAPI API + static web UI (pretrained browser model + optional /triage)."""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ from pathlib import Path
 
 import torch
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -43,8 +42,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.mount("/static", StaticFiles(directory=STATIC), name="static")
-
 
 class TriageRequest(BaseModel):
     text: str = Field(..., min_length=10, description="Clinical note text (synthetic/demo)")
@@ -59,11 +56,6 @@ class TriageResponse(BaseModel):
     confidence: float
     ranking: list[dict]
     disclaimer: str
-
-
-@app.get("/")
-def index() -> FileResponse:
-    return FileResponse(STATIC / "index.html")
 
 
 @app.get("/health")
@@ -87,3 +79,8 @@ def triage(req: TriageRequest) -> TriageResponse:
         DEVICE,
     )
     return TriageResponse(**result)
+
+
+# Static UI last so /health and /triage stay API routes.
+# index.html uses relative asset paths (works on GitHub Pages too).
+app.mount("/", StaticFiles(directory=STATIC, html=True), name="web")

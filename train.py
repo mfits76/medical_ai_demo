@@ -134,6 +134,11 @@ def main() -> None:
     (args.out_dir / "classification_report.txt").write_text(report, encoding="utf-8")
     print(f"\nSaved artifacts to {args.out_dir.resolve()}")
 
+    # Browser demo reads static/model.json — keep it in sync after offline training.
+    from export_web_model import export
+
+    export(ckpt_path, Path("static/model.json"))
+
 
 if __name__ == "__main__":
     main()
