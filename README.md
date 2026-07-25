@@ -1,8 +1,14 @@
 # Clinical Note Triage — PyTorch PoC for medical AI Engineer
 
+[![Open in GitHub Codespaces](https://img.shields.io/badge/Codespaces-Open-blue?logo=github)](https://codespaces.new/mfits76/ai_example?quickstart=1)
+
 Interview / portfolio example for the **AI Engineer (w/m/d)** role at **medical Service IT GmbH**: a small but complete path from **prototype → trained model → integrable API**, focused on a hospital-relevant use case (routing documentation to the right specialty).
 
 > **Not a medical device.** Trained only on **synthetic German notes**. Do not send real patient data.
+
+**[Open in Codespaces](https://codespaces.new/mfits76/ai_example?quickstart=1)** (runs the Python web server in the cloud) · or use `start_web.bat` locally
+
+> A local/cloud **Python server is required** for live triage. GitHub Pages only serves static files and cannot run PyTorch inference.
 
 ## Why this example maps to the job
 
@@ -58,6 +64,14 @@ Double-click `start_ui.bat`, or:
 ```
 
 ## Web UI
+
+### Option A — GitHub Codespaces (no local install)
+
+1. Open **[Codespaces](https://codespaces.new/mfits76/ai_example?quickstart=1)**
+2. In the terminal: `.venv/bin/uvicorn api:app --host 0.0.0.0 --port 8000`
+3. Open the forwarded port **8000** in the browser
+
+### Option B — Local (`start_web.bat`)
 
 Double-click `start_web.bat` (opens http://127.0.0.1:8000), or:
 
