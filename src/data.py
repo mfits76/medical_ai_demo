@@ -1,88 +1,73 @@
 """Synthetic German clinical notes for specialty triage.
 
-Uses fictional patients and template phrases only — no real PHI.
-This mirrors a hospital documentation / routing use case while staying
-DSGVO-safe for demos and interviews.
+Loads expandable templates from data/specialty_dictionary.json.
+Uses fictional phrases only — no real PHI.
 """
 
 from __future__ import annotations
 
+import json
 import random
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 
-SPECIALTIES = (
-    "Kardiologie",
-    "Neurologie",
-    "Orthopaedie",
-    "Innere_Medizin",
-    "Notfallmedizin",
-)
+DICTIONARY_PATH = Path(__file__).resolve().parents[1] / "data" / "specialty_dictionary.json"
 
+
+@lru_cache(maxsize=1)
+def load_dictionary(path: str | None = None) -> dict:
+    dict_path = Path(path) if path else DICTIONARY_PATH
+    payload = json.loads(dict_path.read_text(encoding="utf-8"))
+
+    specialties = payload["specialties"]
+    templates = payload["templates"]
+    noise = payload.get("noise", [])
+
+    missing = [name for name in specialties if name not in templates]
+    if missing:
+        raise ValueError(f"Dictionary missing templates for: {missing}")
+
+    empty = [name for name in specialties if not templates[name]]
+    if empty:
+        raise ValueError(f"Dictionary has empty template lists for: {empty}")
+
+    extra = sorted(set(templates) - set(specialties))
+    if extra:
+        raise ValueError(
+            f"Dictionary has templates for specialties not listed in "
+            f"'specialties': {extra}"
+        )
+
+    return {
+        "specialties": tuple(specialties),
+        "templates": {k: list(v) for k, v in templates.items()},
+        "noise": list(noise),
+    }
+
+
+def _dictionary() -> dict:
+    return load_dictionary()
+
+
+def get_specialties() -> tuple[str, ...]:
+    return _dictionary()["specialties"]
+
+
+# Eager defaults for existing imports (train.py uses SPECIALTIES at import time).
+SPECIALTIES: tuple[str, ...] = get_specialties()
 LABEL2ID = {name: i for i, name in enumerate(SPECIALTIES)}
 ID2LABEL = {i: name for name, i in LABEL2ID.items()}
 
-_TEMPLATES: dict[str, list[str]] = {
-    "Kardiologie": [
-        "Patient berichtet ueber belastungsabhaengige Brustschmerzen und Dyspnoe.",
-        "Bekannte koronare Herzkrankheit, aktuell instabile Angina pectoris.",
-        "EKG zeigt ST-Senkungen, Troponin leicht erhoeht, Verdacht auf ACS.",
-        "Palpitationen und unregelmaessiger Puls, V. a. Vorhofflimmern.",
-        "Nach Herzinsuffizienz-Dekompensation: Beinoedeme und Orthoopnoe.",
-        "Belastungs-EKG pathologisch, weiter kardiologische Abklaerung noetig.",
-        "Z. n. Stentimplantation, heute erneut thorakales Engegefuehl.",
-        "Blutdruckkrise mit Kopfschmerzen, RR 210/110 mmHg.",
-    ],
-    "Neurologie": [
-        "Akute Halbseitenschwaeche rechts und Sprachstoerung seit heute morgen.",
-        "Wiederholte Kopfschmerzen mit Sehstoerungen, V. a. Migraine avec aura.",
-        "Schwindel, Doppelbilder und Gangunsicherheit seit drei Tagen.",
-        "Epileptischer Anfall in der Vorgeschichte, heute erneut Konvulsion.",
-        "Taubheitsgefuehl in beiden Haenden, V. a. Polyneuropathie.",
-        "Gedaechtnisstoerungen und Orientierungsprobleme, dementielle Abklaerung.",
-        "Tremor der rechten Hand und Bradykinese, V. a. Parkinson-Syndrom.",
-        "Plötzliche Gesichtslähmung links, V. a. Fazialisparese.",
-    ],
-    "Orthopaedie": [
-        "Chronische Rueckenschmerzen lumbal mit Ausstrahlung ins Bein.",
-        "Kniegelenksschwellung nach Distorsion, Bewegung stark eingeschraenkt.",
-        "Hueftgelenkschmerzen rechts, belastungsabhaengig, V. a. Koxarthrose.",
-        "Schulterluxation reponiert, nun Instabilitaetsgefuehl und Schmerzen.",
-        "Frakturverdacht distal Radius nach Sturz auf die Hand.",
-        "Bandscheibenvorfall bekannt, jetzt progrediente Beinschwaeche.",
-        "Achillessehnenruptur nach Sportunfall, starke Druckschmerzhaftigkeit.",
-        "Gonarthrose beidseits, Indikation zur Gelenkersatz-Evaluation.",
-    ],
-    "Innere_Medizin": [
-        "Seit Wochen unklare Gewichtsabnahme, Nachtschweiss und Muedigkeit.",
-        "Neu diagnostizierter Diabetes mellitus Typ 2, Blutzucker entgleist.",
-        "Oberbauchschmerzen und Erbrechen, V. a. Gastritis oder Ulkus.",
-        "Erhoehete Leberwerte, Abklaerung einer hepatischen Ursache.",
-        "Rezidivierende Harnwegsinfekte, aktuell Fieber und Dysurie.",
-        "Anämie unklarer Genese, weiter internistische Diagnostik geplant.",
-        "Hypothyreose unter Substitution, aktuell weiterhin Antriebslosigkeit.",
-        "Unklarer Bauchschmerz diffus, Differenzialdiagnose breit.",
-    ],
-    "Notfallmedizin": [
-        "Polytrauma nach Verkehrsunfall, mehrfach verletzt, vital bedroht.",
-        "Akute Atemnot und Zyanose, Verdacht auf Lungenembolie.",
-        "Bewusstlosigkeit unklarer Ursache, GCS 8 bei Aufnahme.",
-        "Schwere anaphylaktische Reaktion nach Medikamenteneinnahme.",
-        "Massive gastrointestinale Blutung mit Kreislaufinstabilitaet.",
-        "Status epilepticus, bislang nicht durchbrechbar.",
-        "Akutes Abdomen mit Abwehrspannung, dringende Abklaerung.",
-        "Sepsisverdacht: Fieber, Tachykardie und Hypotonie.",
-    ],
-}
 
-_NOISE = [
-    "Vorgeschichte unauffaellig.",
-    "Allergien nicht bekannt.",
-    "Medikation wird erhoben.",
-    "Vitalparameter stabil.",
-    "Laborwerte ausstehend.",
-    "Angehoerige informiert.",
-    "Dokumentation vorlaeufig.",
-]
+def reload_dictionary(path: str | None = None) -> None:
+    """Reload JSON and refresh module-level specialty maps (useful after edits)."""
+    global SPECIALTIES, LABEL2ID, ID2LABEL
+    load_dictionary.cache_clear()
+    data = load_dictionary(path)
+    SPECIALTIES = data["specialties"]
+    LABEL2ID = {name: i for i, name in enumerate(SPECIALTIES)}
+    ID2LABEL = {i: name for name, i in LABEL2ID.items()}
 
 
 @dataclass(frozen=True)
@@ -95,21 +80,36 @@ class ClinicalNote:
         return LABEL2ID[self.specialty]
 
 
-def generate_notes(n_per_class: int = 80, seed: int = 42) -> list[ClinicalNote]:
-    """Build a balanced synthetic corpus of German clinical notes."""
+def generate_notes(
+    n_per_class: int = 80,
+    seed: int = 42,
+    dictionary_path: str | Path | None = None,
+) -> list[ClinicalNote]:
+    """Build a balanced synthetic corpus from the JSON dictionary."""
+    if dictionary_path is not None:
+        load_dictionary.cache_clear()
+        data = load_dictionary(str(dictionary_path))
+    else:
+        data = _dictionary()
+
+    templates: dict[str, list[str]] = data["templates"]
+    noise: list[str] = data["noise"]
     rng = random.Random(seed)
     notes: list[ClinicalNote] = []
 
-    for specialty, templates in _TEMPLATES.items():
+    for specialty, specialty_templates in templates.items():
         for _ in range(n_per_class):
-            base = rng.choice(templates)
-            extras = rng.sample(_NOISE, k=rng.randint(1, 3))
-            # Light paraphrasing via shuffle + optional second template fragment
+            base = rng.choice(specialty_templates)
+            extras = (
+                rng.sample(noise, k=min(len(noise), rng.randint(1, 3)))
+                if noise
+                else []
+            )
             if rng.random() < 0.35:
-                fragment = rng.choice(templates)
-                text = f"{base} {fragment} {' '.join(extras)}"
+                fragment = rng.choice(specialty_templates)
+                text = f"{base} {fragment} {' '.join(extras)}".strip()
             else:
-                text = f"{base} {' '.join(extras)}"
+                text = f"{base} {' '.join(extras)}".strip()
             notes.append(ClinicalNote(text=text, specialty=specialty))
 
     rng.shuffle(notes)
