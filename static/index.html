@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clinical Note Triage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="header">
+        <p class="eyebrow">medical AI Engineer PoC</p>
+        <h1>Clinical Note Triage</h1>
+        <p class="lede">
+          Route synthetic German clinical notes to a specialty with a PyTorch
+          TextCNN. Demo only — not a medical device.
+        </p>
+        <p id="status" class="status">Checking model…</p>
+      </header>
+
+      <main class="workspace">
+        <section class="panel input-panel">
+          <div class="panel-head">
+            <h2>Clinical note</h2>
+            <label class="example-label">
+              Example
+              <select id="example">
+                <option value="Kardiologie">Kardiologie</option>
+                <option value="Neurologie">Neurologie</option>
+                <option value="Orthopaedie">Orthopaedie</option>
+                <option value="Innere Medizin">Innere Medizin</option>
+                <option value="Notfallmedizin">Notfallmedizin</option>
+              </select>
+            </label>
+          </div>
+          <textarea
+            id="note"
+            rows="8"
+            spellcheck="false"
+            placeholder="Enter a synthetic clinical note…"
+          ></textarea>
+          <label class="phi-check">
+            <input id="no-phi" type="checkbox" checked />
+            I confirm this text contains no real patient data (PHI)
+          </label>
+          <button id="predict" type="button">Predict specialty</button>
+          <p id="error" class="error" hidden></p>
+        </section>
+
+        <section class="panel result-panel">
+          <h2>Result</h2>
+          <div id="result-empty" class="empty">Run a prediction to see ranking.</div>
+          <div id="result" hidden>
+            <p class="prediction" id="prediction">—</p>
+            <ul id="ranking" class="ranking"></ul>
+            <p id="disclaimer" class="disclaimer"></p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
