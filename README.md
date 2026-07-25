@@ -1,12 +1,12 @@
 # Clinical Note Triage — PyTorch PoC for medical AI Engineer
 
-[![Demo](https://img.shields.io/badge/demo-live-blue)](https://mfits76.github.io/ai_example/)
+[![Demo](https://img.shields.io/badge/demo-live-blue)](https://mfits76.github.io/medical_ai_demo/)
 
 Interview / portfolio example for the **AI Engineer (w/m/d)** role at **medical Service IT GmbH**: a small but complete path from **prototype → trained model → integrable API**, focused on a hospital-relevant use case (routing documentation to the right specialty).
 
 > **Not a medical device.** Trained only on **synthetic German notes**. Do not send real patient data.
 
-**[Live web demo](https://mfits76.github.io/ai_example/)** — no install, uses pretrained weights in the browser
+**[Live web demo](https://mfits76.github.io/medical_ai_demo/)** — no install, uses pretrained weights in the browser
 
 ## How it works
 
@@ -167,7 +167,7 @@ python export_web_model.py
 
 ### Live on GitHub Pages (no local server)
 
-Open **https://mfits76.github.io/ai_example/**
+Open **https://mfits76.github.io/medical_ai_demo/**
 
 ### Local static / API host
 
@@ -192,7 +192,7 @@ python predict.py --text "Akute Halbseitenschwaeche rechts und Sprachstoerung se
 ## Project layout
 
 ```
-ai_example/
+medical_ai_demo/
   data/
     specialty_dictionary.json  # expandable training phrases
   train.py              # offline PyTorch training → artifacts/
