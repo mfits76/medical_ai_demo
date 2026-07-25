@@ -114,5 +114,5 @@ ai_example/
     tokenizer.py
     model.py        # SpecialtyTextCNN
     train_utils.py
-  artifacts/        # created after training
+  artifacts/        # trained model + metrics (included in repo)
 ```

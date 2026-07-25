@@ -1,0 +1,11 @@
+                precision    recall  f1-score   support
+
+   Kardiologie      1.000     1.000     1.000        15
+    Neurologie      1.000     1.000     1.000        15
+   Orthopaedie      1.000     1.000     1.000        15
+Innere_Medizin      1.000     1.000     1.000        15
+Notfallmedizin      1.000     1.000     1.000        15
+
+      accuracy                          1.000        75
+     macro avg      1.000     1.000     1.000        75
+  weighted avg      1.000     1.000     1.000        75

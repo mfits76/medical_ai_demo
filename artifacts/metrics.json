@@ -1,0 +1,11 @@
+{
+  "device": "cpu",
+  "n_train": 350,
+  "n_val": 75,
+  "n_test": 75,
+  "vocab_size": 219,
+  "test_accuracy": 1.0,
+  "best_val_accuracy": 1.0,
+  "checkpoint": "artifacts\\model.pt",
+  "confusion_matrix": "artifacts\\confusion_matrix.png"
+}
